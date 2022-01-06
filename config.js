@@ -1,0 +1,3 @@
+export default {
+  YOUR_PUBLIC_KEYS_HERE: 'YOUR_PUBLIC_VALUES_HERE'
+}
