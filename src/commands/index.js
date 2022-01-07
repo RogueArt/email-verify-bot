@@ -1,2 +1,2 @@
-export * from './subcommand/hello.js'
+export * from './verify.js'
 export * from './help.js'
