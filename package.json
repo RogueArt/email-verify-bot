@@ -12,11 +12,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@devsnowflake/quick.db": "^2.0.3",
     "discord.js": "^13.5.0",
-    "dotenv": "^10.0.0"
+    "dotenv": "^10.0.0",
+    "email-validator": "^2.0.4"
   },
   "devDependencies": {
-    "nodemon": "^2.0.15"
+    "eslint": "^8.6.0",
+    "nodemon": "^2.0.15",
+    "prettier": "2.5.1"
   },
   "nodemonConfig": {
     "delay": 2500
