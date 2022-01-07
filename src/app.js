@@ -1,12 +1,12 @@
 // Allow access to .env file
-import dotenv from 'dotenv'
+import dotenv from "dotenv"
 dotenv.config()
 
 // Get keys from .env
 const { BOT_TOKEN, CMD_PREFIX } = process.env
 
 // Discord
-import { Client, Intents } from 'discord.js'
+import { Client, Intents } from "discord.js"
 
 // Initialize Discord client
 const client = new Client({
@@ -14,16 +14,16 @@ const client = new Client({
 })
 
 // Bring in commands, helper functions
-import { extractCmdAndArgs, isValidMsg, logCmd } from './utils/lib.js'
-import { hello, help } from './commands/index.js'
+import { extractCmdAndArgs, isValidMsg, logCmd } from "./utils/lib.js"
+import { verify, help } from "./commands/index.js"
 
 // Execute on start up
-client.on('ready', () => {
-  console.log('Your bot name here', 'bot started!')
+client.on("ready", () => {
+  console.log("UCLA Email Verification", "bot started!")
 })
 
 // Execute on message creation
-client.on('messageCreate', async msg => {
+client.on("messageCreate", async (msg) => {
   // Don't reply to message sent by bot
   if (msg.author.bot) return
 
@@ -38,12 +38,13 @@ client.on('messageCreate', async msg => {
 
   // Call right function for command
   switch (cmd) {
-    // Hello world command
-    case 'hello':
-      await hello(msg, args)
+    // Verify command
+    case "verify":
+      await verify(msg, args)
       break
 
-    case 'help':
+    // Help command
+    case "help":
       await help(msg, args)
       break
 

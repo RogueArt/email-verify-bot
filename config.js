@@ -1,3 +1,12 @@
 export default {
-  YOUR_PUBLIC_KEYS_HERE: 'YOUR_PUBLIC_VALUES_HERE'
+  dbPath: './',
+  allowedEmailDomains: ['ucla.edu', 'g.ucla.edu'],
+  discord: {
+    serverID: '',
+    verifiedRoleID: '924910807609905254',
+  },
+  sendGrid: {
+    templateID: '',
+    sender: '',
+  },
 }
