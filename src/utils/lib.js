@@ -43,7 +43,7 @@ export function extractCmdAndArgs(msg) {
 export function logCmd(msg) {
   const currentTime = (new Date()).toLocaleString()
   const { username, discriminator } = msg.author
-  const nameWithTag = username + discriminator
+  const nameWithTag = username + '#' + discriminator
 
   console.log(`${currentTime} - ${nameWithTag}: ${msg.content}`);
 }
