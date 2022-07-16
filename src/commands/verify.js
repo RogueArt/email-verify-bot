@@ -1,52 +1,76 @@
 import config from '../../config.js'
 import emailValidator from 'email-validator'
-import db from '../db/db.js'
+import db from '../services/db.js'
+import sgMail, { createEmailMsg, generateAuthCode } from '../services/sendGrid'
+import { ERROR_MSGS, SUCCESS_MSGS, AUTH_CODE_NUM_DIGITS } from '../utils/constants.js'
+import { getFullUsername, pingAnAdmin, getSevenDaysFromNow } from '../utils/lib.js'
 
 const { allowedEmailDomains, discord } = config
 const { verifiedRoleID } = discord
 
-export async function verify(msg, args) {
-  // Check if the user provided any args
-  if (args.length < 1) {
-    return msg.channel.send('Please provide a valid email address in order to be verified!')
-  }
+
+export async function sendVerificationEmail(msg, args) {
+  // <=== 1 - INPUT VALIDATION ===>
+  const sendMsg = (msg) => msg.channel.send(msg)
+  const fullUsername = getFullUsername(msg)
+
+  // 1. Check if user provided any args
+  if (args.length < 1) return sendMsg(ERROR_MSGS.insufficientArgs)
+  
+  // 2. Check if the email is formatted correctly
   const email = args[0]
+  if (!emailValidator.validate(email)) return sendMsg(ERROR_MSGS.invalidEmailFormat)
 
-  // Check if the email is formatted correctly
-  if (!emailValidator.validate(email)) {
-    return msg.channel.send('Please provide a correctly formatted email address in order to be verified!')
-  }
+  // 3. Check if the email matches allowed domains
+  if (!allowedEmailDomains.some((domain) => email.endsWith(domain))) return sendMsg(ERROR_MSGS.unallowedDomain(allowedEmailDomains))
 
-  // Check if the email matches the domain
-  if (!allowedEmailDomains.some((domain) => email.endsWith(domain))) {
-    const domainsStr = allowedEmailDomains.join(', ')
-    return msg.channel.send(
-      `Please provide an email address that ends with any of the following domains: \`${domainsStr}\``
-    )
-  }
+  // 4. Check if the email has already been used before
+  if (db.has(`${fullUsername}.email`)) return sendMsg(ERROR_MSGS.emailAlreadyRegistered(email))
 
-  // Check if the email has already been used before
-  if (db.has(email)) {
-    return msg.channel.send(`Unable to verify you. Email "${email}" has already been registered with an account.`)
-  }
+  // <=== 2 - EMAIL VERIFICATION ===>
+  // 1. Send a verification email
+  sendMsg(SUCCESS_MSGS.sentVerificationEmail(email))
+  const authCode = generateAuthCode(AUTH_CODE_NUM_DIGITS)
+  const emailMsg = createEmailMsg(email, authCode)
+  
+  // 2. Check if the email was successfully sent
+  const response = await sgMail.send(emailMsg).catch(console.error)
+  if (!response || response[0].statusCode !== 200) return sendMsg(ERROR_MSGS.couldNotSendEmail)
 
-  // Send a verification email
-  msg.channel.send(`Sent a verification email to ${email}. Click the link to verify your account!`)
+  // 3. Add the user's account to the database for now  
+  db.set(`${fullUsername}.email`, email)
+  db.set(`${fullUsername}.isActive`, false) // Mark them as inactive
+  db.set(`${fullUsername}.authCode`, authCode)
+  // Set code to expire in 7 days from now
+  db.set(`${fullUsername}.expiresAt`, getSevenDaysFromNow())
+}
 
-  // Add the verified role to the user
-  const user = msg.author
-  try {
-    msg.member.roles.add(verifiedRoleID)
-  } catch (e) {
-    console.error(e)
-    // Possibly ping an admin here?
-    return msg.channel.send('Error, could not verify you into the server. The admins have been contacted.') 
-  }
+export async function verifyAuthCode(msg, args) {
+  const sendMsg = (msg) => msg.channel.send(msg)
+  const fullUsername = getFullUsername(msg.author)
 
-  // Add the user's account to the database  
-  const { username, discriminator } = user
-  const fullUsername = username + '#' + discriminator
-  db.set(email, fullUsername)
+  // Validate the auth code
+  const [authCodeAsStr] = args
+  const authCode = parseInt(authCodeAsStr)
+  if (!Number.isInteger(authCode)) return sendMsg(ERROR_MSGS.authCodeNonNumeric)
+  if (authCodeAsStr.length !== AUTH_CODE_NUM_DIGITS) return sendMsg(ERROR_MSGS.authCodeLengthMismatch)
 
-  msg.channel.send('Successfully verified you into the server!')
+  // Compare it to what we have stored in our database
+  const storedCode = db.get(`${fullUsername}.authCode`)
+
+  // Provided code doesn't match stored code
+  if (storedCode !== authCode) return sendMsg(ERROR_MSGS.authCodeCodeMismatch)
+
+  // Fetch the member from Discord
+  const member = await msg.channel.guild.members.fetch(msg.author.id).catch(console.error)
+  if (!member) return sendMsg(ERROR_MSGS.couldNotFindUser(fullUsername))
+  
+  // Fetch the desired role from Discord
+  const role = msg.channel.guild.roles.cache.find(({id}) => id === verifiedRoleID).catch(console.error)
+  if (!role) return sendMsg(ERROR_MSGS.couldNotFindRole)
+  
+  // Add the role to the and active their account
+  await member.roles.add(role)
+  db.set(`${fullUsername}.isActive`, true)
+  return sendMsg(ERROR_MSGS.successfulVerification(fullUsername))
 }

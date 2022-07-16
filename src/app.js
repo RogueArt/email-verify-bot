@@ -7,6 +7,7 @@ const { BOT_TOKEN, CMD_PREFIX } = process.env
 
 // Discord
 import { Client, Intents } from "discord.js"
+import db from './services/db.js'
 
 // Initialize Discord client
 const client = new Client({
@@ -14,8 +15,8 @@ const client = new Client({
 })
 
 // Bring in commands, helper functions
-import { extractCmdAndArgs, isValidMsg, logCmd } from "./utils/lib.js"
-import { verify, help } from "./commands/index.js"
+import { extractCmdAndArgs, getFullUsername, logCmd } from "./utils/lib.js"
+import { sendVerificationEmail, verifyAuthCode, help } from './commands/index.js'
 
 // Execute on start up
 client.on("ready", () => {
@@ -27,9 +28,6 @@ client.on("messageCreate", async (msg) => {
   // Don't reply to message sent by bot
   if (msg.author.bot) return
 
-  // Validate message if needed
-  if (!isValidMsg(msg)) return // msg.channel.send('Invalid message')
-
   // Store logs of commands by users
   logCmd(msg)
 
@@ -40,7 +38,13 @@ client.on("messageCreate", async (msg) => {
   switch (cmd) {
     // Verify command
     case "verify":
-      await verify(msg, args)
+      // Verify email if user doesn't exist in database
+      if (db.has(`${getFullUsername(msg.author)}.email`)) await sendVerificationEmail(msg, args)
+
+      // Otherwise verify if exists, but inactive
+      else await verifyAuthCode(msg, args)
+
+      // Don't verify if they exist and are active
       break
 
     // Help command
