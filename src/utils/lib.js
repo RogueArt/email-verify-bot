@@ -47,3 +47,25 @@ export function logCmd(msg) {
 
   console.log(`${currentTime} - ${nameWithTag}: ${msg.content}`);
 }
+
+/**
+ * Return a username in format
+ * Username#1234
+ * @param {*} msg 
+ * @returns {string} 
+ */
+export function getFullUsername(msg) {
+  const { username, discriminator } = msg.author
+  return username + '#' + discriminator
+}
+
+export function getSevenDaysFromNow() {
+  const sevenDaysFromNow = new Date()
+  sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7)
+  return sevenDaysFromNow
+}
+
+// TO-DO!
+export function pingAnAdmin() {
+  console.log('TO-DO: Ping the admin!')
+}
