@@ -1,5 +1,6 @@
-
+export const NUM_EXPECTED_ARGS = 1
 export const AUTH_CODE_NUM_DIGITS = 6
+export const SUCCESS_STATUS_CODE = 200
 export const ERROR_MSGS = {
   // Validate email
   insufficientArgs: 'Please provide a valid email address in order to be verified!',

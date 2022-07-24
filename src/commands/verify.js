@@ -2,12 +2,17 @@ import config from '../../config.js'
 import emailValidator from 'email-validator'
 import db from '../services/db.js'
 import sgMail, { createEmailMsg, generateAuthCode } from '../services/sendGrid'
-import { ERROR_MSGS, SUCCESS_MSGS, AUTH_CODE_NUM_DIGITS } from '../utils/constants.js'
+import {
+  ERROR_MSGS,
+  SUCCESS_MSGS,
+  AUTH_CODE_NUM_DIGITS,
+  NUM_EXPECTED_ARGS,
+  SUCCESS_STATUS_CODE,
+} from '../utils/constants.js'
 import { getFullUsername } from '../utils/lib.js'
 
 const { allowedEmailDomains, discord } = config
 const { verifiedRoleID } = discord
-
 
 export async function sendVerificationEmail(msg, args) {
   // <=== 1 - INPUT VALIDATION ===>
@@ -15,7 +20,7 @@ export async function sendVerificationEmail(msg, args) {
   const fullUsername = getFullUsername(msg)
 
   // 1. Check if user provided any args
-  if (args.length < 1) return sendMsg(ERROR_MSGS.insufficientArgs)
+  if (args.length < NUM_EXPECTED_ARGS) return sendMsg(ERROR_MSGS.insufficientArgs)
   
   // 2. Check if the email is formatted correctly
   const email = args[0]
@@ -35,7 +40,7 @@ export async function sendVerificationEmail(msg, args) {
   
   // 2. Check if the email was successfully sent
   const response = await sgMail.send(emailMsg).catch(console.error)
-  if (!response || response[0].statusCode !== 200) return sendMsg(ERROR_MSGS.couldNotSendEmail)
+  if (!response || response[0].statusCode !== SUCCESS_STATUS_CODE) return sendMsg(ERROR_MSGS.couldNotSendEmail)
 
   // 3. Add the user's account to the database for now  
   db.addUserAccount(fullUsername, email, authCode)
