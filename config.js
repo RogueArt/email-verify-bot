@@ -1,12 +1,19 @@
 export default {
+  // <========= DATA STORAGE ========>
   dbPath: './',
-  allowedEmailDomains: ['ucla.edu', 'g.ucla.edu'],
+
+  // <======== DISCORD ========>
+  prefix: '!',
   discord: {
     serverID: '',
-    verifiedRoleID: '924910807609905254',
+    verifiedRoleID: '',
+    adminID: '',
   },
-  sendGrid: {
-    templateID: '',
-    sender: '',
-  },
+
+  // <======== EMAILS ========>
+  allowedEmailDomains: ['your-school.edu', 'g.your-school.edu'],
+  daysUntilEmailExpires: 7,
+
+  // <======== COMMANDS LIST ========>
+
 }
