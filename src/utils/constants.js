@@ -22,11 +22,3 @@ export const SUCCESS_MSGS = {
   sentVerificationEmail: (email) => `Sent a verification email to ${email}! Verify using \`!verify <code>\`. Please check if your spam folder if you don't receive it.`,
   successfulVerification: (username) => `Thanks ${username}! You've now been verified and can access the server!`,
 }
-export const HELP_CMD_DESCRIPTION_LIST = [
-  {
-    cmdName: 'verify email',
-    cmdArgs: ['Email/Auth Code'],
-    description:
-      'Enter email or auth code as instructed to verify your account',
-  },
-]

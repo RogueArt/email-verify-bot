@@ -52,7 +52,7 @@ client.on("messageCreate", async (msg) => {
 
     // Help command
     case "help":
-      await help(msg, args)
+      await help(msg)
       break
 
     // Default handler if command not understood
