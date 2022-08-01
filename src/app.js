@@ -3,11 +3,12 @@ import dotenv from "dotenv"
 dotenv.config()
 
 // Get keys from .env
-const { BOT_TOKEN, CMD_PREFIX } = process.env
+const { BOT_TOKEN } = process.env
 
 // Discord
 import { Client, Intents } from "discord.js"
 import db from './services/db.js'
+import config from '../config.js'
 
 // Initialize Discord client
 const client = new Client({
@@ -18,9 +19,11 @@ const client = new Client({
 import { extractCmdAndArgs, getFullUsername, logCmd } from "./utils/lib.js"
 import { sendVerificationEmail, verifyAuthCode, help } from './commands/index.js'
 
+const { prefix } = config
+
 // Execute on start up
 client.on("ready", () => {
-  console.log("UCLA Email Verification", "bot started!")
+  console.log("Email verification bot started!")
 })
 
 // Execute on message creation
@@ -39,7 +42,7 @@ client.on("messageCreate", async (msg) => {
     // Verify command
     case "verify":
       // Verify email if user doesn't exist in database
-      if (db.hasEmail(getFullUsername(msg.author))) await sendVerificationEmail(msg, args)
+      if (!db.hasEmail(getFullUsername(msg.author))) await sendVerificationEmail(msg, args)
 
       // Otherwise verify if exists, but inactive
       else await verifyAuthCode(msg, args)
@@ -55,7 +58,7 @@ client.on("messageCreate", async (msg) => {
     // Default handler if command not understood
     default:
       msg.channel.send(
-        `Invalid command. Type \`${CMD_PREFIX}help\` to see the list of commands.`
+        `Invalid command. Type \`${prefix}help\` to see the list of commands.`
       )
       break
   }
