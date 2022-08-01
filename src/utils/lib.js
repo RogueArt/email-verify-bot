@@ -81,9 +81,11 @@ export function pingAnAdmin() {
 /**
  * Takes in any string converts it to Title Case
  * @param {String} str (in any case)
- * @returns {String} (in title case)
+ * @returns {String} (In Title Case)
  */
 export function toTitleCase(str) {
+  if (str.length === 0) return str
+
   return str
     .split(WHITESPACE_REGEX)
     .map((w) => w[0].toUpperCase() + w.substring(1).toLowerCase())
