@@ -1,3 +1,4 @@
+export const WHITESPACE_REGEX = /\s+/
 export const NUM_EXPECTED_ARGS = 1
 export const AUTH_CODE_NUM_DIGITS = 6
 export const SUCCESS_STATUS_CODE = 200
@@ -18,6 +19,14 @@ export const ERROR_MSGS = {
   couldNotAddRole: 'Error, could not add verified role to your account. The admins have been contacted.',
 }
 export const SUCCESS_MSGS = {
-  sentVerificationEmail: (email) => `Sent a verification email to ${email}! Verify using \`!verify <code>\`. Please check if your spam folder if you haven't received it yet.`,
+  sentVerificationEmail: (email) => `Sent a verification email to ${email}! Verify using \`!verify <code>\`. Please check if your spam folder if you don't receive it.`,
   successfulVerification: (username) => `Thanks ${username}! You've now been verified and can access the server!`,
 }
+export const HELP_CMD_DESCRIPTION_LIST = [
+  {
+    cmdName: 'verify email',
+    cmdArgs: ['Email/Auth Code'],
+    description:
+      'Enter email or auth code as instructed to verify your account',
+  },
+]
