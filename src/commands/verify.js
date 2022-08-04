@@ -1,7 +1,7 @@
 import config from '../../config.js'
 import emailValidator from 'email-validator'
 import db from '../services/db.js'
-import sgMail, { createEmailMsg, generateAuthCode } from '../services/sendGrid.js'
+import { generateAuthCode } from '../services/crypto.js'
 import {
   ERROR_MSGS,
   SUCCESS_MSGS,
