@@ -1,0 +1,35 @@
+export default {
+  // <========= DATA STORAGE ========>
+  dbPath: './',
+
+  // <======== DISCORD ========>
+  prefix: '!',
+  discord: {
+    serverID: '',
+    verifiedRoleID: '',
+    adminID: '',
+  },
+
+  // <======== EMAILS ========>
+  allowedEmailDomains: ['your-school.edu', 'g.your-school.edu'],
+  daysUntilEmailExpires: 7,
+  emailConfig: {
+    from: '"Your Discord Server Name Here" <your-server-discord-name@gmail.com>',
+    subject: 'Verify Your Email to Join the Discord Server',
+    emailTemplatePath: '../../static/email-template.ejs',
+  },
+
+  // <======== COMMANDS LIST ========>
+  helpEmbedOptions: {
+    color: 0xFF0000,
+    title: 'Available Commands',
+    commandDescriptions: [
+      {
+        cmdName: 'verify email',
+        cmdArgs: ['Email/Auth Code'],
+        description:
+          'Enter email or auth code as instructed to verify your account',
+      },
+    ],
+  },
+}

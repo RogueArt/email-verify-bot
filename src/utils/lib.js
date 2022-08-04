@@ -5,7 +5,7 @@ dotenv.config()
 // Get config data
 import config from '../../config.js'
 import { WHITESPACE_REGEX } from './constants.js'
-const { prefix } = config
+const { prefix, allowedEmailDomains } = config
 
 // <==== COMMAND HANDLING ====>
 /**
@@ -56,7 +56,9 @@ export function logCmd(msg) {
  * @returns {string} 
  */
 export function getFullUsername(user) {
+  if (user?.constructor?.name !== 'User') throw new Error('Did not pass in a User object for getting full username.')
   const { username, discriminator } = user
+
   return username + '#' + discriminator
 }
 
@@ -106,10 +108,15 @@ export function formatCmdArgsForEmbed(cmdArgs) {
 }
 
 export function genFieldsFromCmdDescriptionList(cmdDescriptionList) {
-  return cmdDescriptionList.map(({ cmdName, cmdArgs, description }, index) => {
+  const cmdFields = cmdDescriptionList.map(({ cmdName, cmdArgs, description }, index) => {
     return {
       name: `${index + 1}. ${toTitleCase(cmdName)}`,
-      value: `\`${prefix}${cmdName} ${formatCmdArgsForEmbed(cmdArgs)}\` - ${description}`,
+      value: `Usage: \`${prefix}${cmdName} ${formatCmdArgsForEmbed(cmdArgs)}\`\nDescription: ${description}`,
     }
   })
+  const helpField = {
+    name: `**Allowed Email Domains:**`,
+    value: `${allowedEmailDomains.join('\n')}`
+  }
+  return cmdFields.concat(helpField)
 }

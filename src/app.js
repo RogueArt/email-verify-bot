@@ -28,8 +28,8 @@ client.on("ready", () => {
 
 // Execute on message creation
 client.on("messageCreate", async (msg) => {
-  // Don't reply to message sent by bot
-  if (msg.author.bot) return
+  // Don't reply to message sent by bot or without correct prefix
+  if (msg.author.bot || !msg.content.startsWith(prefix)) return
 
   // Store logs of commands by users
   logCmd(msg)
@@ -42,7 +42,8 @@ client.on("messageCreate", async (msg) => {
     // Verify command
     case "verify":
       // Verify email if user doesn't exist in database
-      if (!db.hasEmail(getFullUsername(msg.author))) await sendVerificationEmail(msg, args)
+      const fullUsername = getFullUsername(msg.author)
+      if (!db.hasEmail(fullUsername)) await sendVerificationEmail(msg, args)
 
       // Otherwise verify if exists, but inactive
       else await verifyAuthCode(msg, args)
