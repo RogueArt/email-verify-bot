@@ -22,7 +22,7 @@ function getEmailTemplate(authCode) {
 
   // Read and template the HTML
   const htmlContent = fs.readFileSync(filePath, 'utf-8')
-  const htmlRenderized = ejs.render(htmlContent, { authCode })
+  const htmlRenderized = ejs.render(htmlContent, { prefix: process.env.PREFIX, authCode })
   return htmlRenderized
 }
 
