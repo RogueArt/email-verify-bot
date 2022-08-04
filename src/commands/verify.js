@@ -10,6 +10,7 @@ import {
   SUCCESS_STATUS_CODE,
 } from '../utils/constants.js'
 import { getFullUsername } from '../utils/lib.js'
+import { sendAuthEmail } from '../services/nodemailer.js'
 
 const { allowedEmailDomains, discord } = config
 const { verifiedRoleID } = discord
@@ -17,7 +18,7 @@ const { verifiedRoleID } = discord
 export async function sendVerificationEmail(msg, args) {
   // <=== 1 - INPUT VALIDATION ===>
   const sendMsg = async (str) => await msg.channel.send(str)
-  const fullUsername = getFullUsername(msg)
+  const fullUsername = getFullUsername(msg.author)
 
   // 1. Check if user provided any args
   if (args.length < NUM_EXPECTED_ARGS) return await sendMsg(ERROR_MSGS.insufficientArgs)
@@ -35,19 +36,18 @@ export async function sendVerificationEmail(msg, args) {
   // <=== 2 - EMAIL VERIFICATION ===>
   // 1. Send a verification email
   const authCode = generateAuthCode(AUTH_CODE_NUM_DIGITS)
-  const emailMsg = createEmailMsg(email, authCode)
   
   // 2. Check if the email was successfully sent
+  const emailResponse = await sendAuthEmail(authCode, email)
+  if (emailResponse.accepted.length !== 1) return await sendMsg(ERROR_MSGS.couldNotSendEmail(email))
   await sendMsg(SUCCESS_MSGS.sentVerificationEmail(email))
-  const response = await sgMail.send(emailMsg).catch(console.error)
-  if (!response || response[0].statusCode < 200 || response[0].statusCode >= 300) return await sendMsg(ERROR_MSGS.couldNotSendEmail(email))
 
   // 3. Add the user's account to the database for now  
   db.addUserAccount(fullUsername, email, authCode)
 }
 
 export async function verifyAuthCode(msg, args) {
-  const sendMsg = async (msg) => await msg.channel.send(msg)
+  const sendMsg = async (str) => await msg.channel.send(str)
   const fullUsername = getFullUsername(msg.author)
 
   // Validate the auth code
@@ -65,11 +65,11 @@ export async function verifyAuthCode(msg, args) {
   if (!member) return await sendMsg(ERROR_MSGS.couldNotFindUser(fullUsername))
   
   // Fetch the desired role from Discord
-  const role = msg.channel.guild.roles.cache.find(({id}) => id === verifiedRoleID).catch(console.error)
+  const role = msg.channel.guild.roles.cache.find(role => role.id === verifiedRoleID)
   if (!role) return await sendMsg(ERROR_MSGS.couldNotFindRole)
   
   // Add the role to the and active their account
   await member.roles.add(role)
   db.setAccountActiveness(fullUsername, true)
-  return sendMsg(ERROR_MSGS.successfulVerification(fullUsername))
+  return sendMsg(SUCCESS_MSGS.successfulVerification(fullUsername))
 }

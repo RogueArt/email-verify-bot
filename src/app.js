@@ -42,7 +42,8 @@ client.on("messageCreate", async (msg) => {
     // Verify command
     case "verify":
       // Verify email if user doesn't exist in database
-      if (!db.hasEmail(getFullUsername(msg.author))) await sendVerificationEmail(msg, args)
+      const fullUsername = getFullUsername(msg.author)
+      if (!db.hasEmail(fullUsername)) await sendVerificationEmail(msg, args)
 
       // Otherwise verify if exists, but inactive
       else await verifyAuthCode(msg, args)

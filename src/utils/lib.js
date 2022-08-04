@@ -56,7 +56,9 @@ export function logCmd(msg) {
  * @returns {string} 
  */
 export function getFullUsername(user) {
+  if (user?.constructor?.name !== 'User') throw new Error('Did not pass in a User object for getting full username.')
   const { username, discriminator } = user
+
   return username + '#' + discriminator
 }
 
