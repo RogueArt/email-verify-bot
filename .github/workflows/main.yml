@@ -1,5 +1,3 @@
-name: Unit & Integration Testing
-
 on:
   push:
     branches: [ main, development ]
