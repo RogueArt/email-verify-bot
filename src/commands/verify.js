@@ -15,9 +15,19 @@ import { sendAuthEmail } from '../services/nodemailer.js'
 const { allowedEmailDomains, discord } = config
 const { verifiedRoleID } = discord
 
+function generateSendMsgFn(msg) {
+  const sendMsg = async (str) => {
+    if (typeof str === 'string') return await msg.channel.send(str)
+
+    // Otherwise send embed
+    return await msg.channel.send({ embeds: [str] })
+  }
+  return sendMsg
+}
+
 export async function sendVerificationEmail(msg, args) {
   // <=== 1 - INPUT VALIDATION ===>
-  const sendMsg = async (str) => await msg.channel.send(str)
+  const sendMsg = generateSendMsgFn(msg)
   const fullUsername = getFullUsername(msg.author)
 
   // 1. Check if user provided any args
@@ -47,7 +57,7 @@ export async function sendVerificationEmail(msg, args) {
 }
 
 export async function verifyAuthCode(msg, args) {
-  const sendMsg = async (str) => await msg.channel.send(str)
+  const sendMsg = generateSendMsgFn(msg)
   const fullUsername = getFullUsername(msg.author)
 
   // Validate the auth code
