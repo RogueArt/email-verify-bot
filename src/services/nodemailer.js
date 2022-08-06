@@ -5,7 +5,7 @@ import config from '../../config.js'
 import ejs from 'ejs'
 import fs from 'fs'
 import url from 'url'
-const { emailConfig } = config
+const { emailConfig, prefix } = config
 
 const transporter = nodemailer.createTransport({
   service: process.env.SENDER_SERVICE,
@@ -22,7 +22,7 @@ function getEmailTemplate(authCode) {
 
   // Read and template the HTML
   const htmlContent = fs.readFileSync(filePath, 'utf-8')
-  const htmlRenderized = ejs.render(htmlContent, { prefix: process.env.PREFIX, authCode })
+  const htmlRenderized = ejs.render(htmlContent, { prefix, authCode })
   return htmlRenderized
 }
 
