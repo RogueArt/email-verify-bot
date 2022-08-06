@@ -111,7 +111,7 @@ export function genFieldsFromCmdDescriptionList(cmdDescriptionList) {
   const cmdFields = cmdDescriptionList.map(({ cmdName, cmdArgs, description }, index) => {
     return {
       name: `${index + 1}. ${toTitleCase(cmdName)}`,
-      value: `\`${prefix}${cmdName} ${formatCmdArgsForEmbed(cmdArgs)}\` - ${description}`,
+      value: `Usage: \`${prefix}${cmdName} ${formatCmdArgsForEmbed(cmdArgs)}\`\nDescription: ${description}`,
     }
   })
   const helpField = {
