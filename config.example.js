@@ -44,7 +44,7 @@ export default {
     // (Required) The "from" section of the email. E.g. what you see when you receive an email from someone else
     from: '"Your Discord Server Name Here" <your-discord-email@gmail.com>',
     // (Required) The "subject" / header of the email.
-    subject: 'Verify Your Email to Join the Discord Server',
+    subject: 'Verify Your Email to Join Your Discord Server Name',
     // (Optional) Location of the email template (HTML/EJS file) that it reads from. Change it to another path if you want a different HTML file.
     emailTemplatePath: '../../static/email-template.ejs',
   },

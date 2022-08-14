@@ -19,8 +19,9 @@ Running the bot:
 
 **Required:**
 - [Install Node.js (JavaScript) v16 or above](https://nodejs.org/en/download/)
-- [Create a Discord.js bot](https://www.writebots.com/discord-bot-token/)
 - [Add an app password to your email provider (e.g. Gmail)](https://support.google.com/accounts/answer/185833?hl=en)
+- [Create a Discord.js bot](https://www.writebots.com/discord-bot-token/)
+- [Add your Discord bot to your server](https://www.youtube.com/watch?v=AzoWBL1I3L0)
 
 **Optional:**
 - [Create a new email account (e.g. Gmail)](https://support.google.com/accounts/answer/27441?hl=en)
@@ -51,13 +52,18 @@ Environment Variables:
 
 **3. (Required) Set required configuration:**
 
-For this part, you'll only need to change the values in `required-config.js`.
+1. Make a copy of `config.example.js` and rename it to `config.js`
+2. Edit the file and replace the following required values with your own. The rest can be left as-is:
 
-| Variable | Default | Allowed Values
-| - | - | - |
-| `dbPath` | `./` - Folder bot runs from | Any valid OS path where you want the data to be stored
-| `prefix` | `!` | The set of characters every bot command starts with. E.g. `!help` |
-| `serverID`| N/A | Any valid Discord server ID |  
+Required Configuration:
+| Variable | Allowed Values
+| - | - |
+| `serverID` | [See how to find Discord IDs](https://www.youtube.com/watch?v=KVLdpboY7bg) |
+| `verifiedRoleID` | [See how to find Discord IDs](https://www.youtube.com/watch?v=KVLdpboY7bg) |
+| `adminID` | [See how to find Discord IDs](https://www.youtube.com/watch?v=KVLdpboY7bg) |
+| `allowedEmailDomains` | Any email domain name, e.g. `gmail.com`, `outlook.com`, `g.ucla.edu` |
+| `from` | Must be in format `"Any Text Here" <your-discord-email-here@mail-domain.com>"` |
+| `subject` | Can be any text, recommended to put your discord name here
 
 # To-Do's / Contributing
 
@@ -71,4 +77,7 @@ Feel free to [raise any issues](https://github.com/RogueArt/email-verify-bot) re
 - Anything else!
 
 **How can I contribute? (TO-DO items):**
+- Expire emails after a certain period of time for security reasons
+- Add more crypto functions for users to choose from to improve security
+- Add a cooldown to prevent bruteforcing or DoSing the bot
 - Add translations for other languages (e.g. Spanish, Chinese, Arabic)
