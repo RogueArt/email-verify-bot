@@ -1,53 +1,83 @@
 # About
 
-A Discord bot written in JS to verify UCLA students by email.
+A Discord.js bot used to verify users by email.
+
+(TO-DO: Add a demonstration)
 
 Feel free to fork or clone this to use at your own university or organization!
 
-Currently this does not support slash commands, but will be updated with support later on.
+# Usage
+
+Running the bot:
+- **Starting:** `npm start`  - Start the bot normally
+- **Development:** `npm run dev` - Starts and live reloads the bot as source coed changes
+- **Tests:** `npm test` - Runs all automated tests against bot
 
 # Getting Started
 
 ## Prerequisites
 
-Install the latest version of [Node](https://nodejs.org/en/download/) from here.
-This bot requires Node v16 or above to function.
+**Required:**
+- [Install Node.js (JavaScript) v16 or above](https://nodejs.org/en/download/)
+- [Add an app password to your email provider (e.g. Gmail)](https://support.google.com/accounts/answer/185833?hl=en)
+- [Create a Discord.js bot](https://www.writebots.com/discord-bot-token/)
+- [Add your Discord bot to your server](https://www.youtube.com/watch?v=AzoWBL1I3L0)
 
-Create a Discord bot [here](https://discord.com/developers) and have the bot token ready.
-You can find the bot token under the "Bot" page for your selected bot. Click "Copy" to copy the bot token to clipboard.
-
-In order for the bot to send verification codes, set up a [Sendgrid API key and template](https://www.twilio.com/docs/verify/email).
-
-See here for example:
-![Bot token page for a Discord bot](https://user-images.githubusercontent.com/57082175/148336114-1a88ba9f-ee9e-414c-a2b6-25532817ceb7.png)
+**Optional:**
+- [Create a new email account (e.g. Gmail)](https://support.google.com/accounts/answer/27441?hl=en)
+- [Setup PM2 so it restarts itself](https://pm2.keymetrics.io/docs/usage/quick-start/)
 
 ## Installation
 
-1. Clone this repository:
+**1. (Required) Open a new terminal, clone this repository and install required dependencies:**
 
 ```bash
 git clone https://github.com/RogueArt/ucla-cs-verify-bot.git
-```
-
-2. Install node modules:
-
-```bash
 cd ucla-cs-verify-bot
 npm install
 ```
 
-3. Configure the bot:
-   1. Make a copy of `.env.example` and call it `.env`
-   2. Replace the value for `BOT_TOKEN` with your Discord bot's token
-   3. Replace the value for `CMD_PREFIX` to any prefix you want your commands to start with
-   4. Add in your `SENDGRID_API` and `SENDGRID_TEMPLATE_ID` to be able to send emails from the bot.
+**2. (Required) Setting enviornment variables (protected data):**
 
-## Running
+1. Make a copy of `.env.example` and rename it to `.env`
+2. Replace all of the values below with your own
 
-To run the bot, simply do `npm run start`.
+Environment Variables:
+| Variable | Allowed Values | Explanation |
+| - | - | - |
+| `BOT_TOKEN` | Discord bot's token | See [tutorial here](https://www.writebots.com/discord-bot-token/) on how to find this |
+| `SENDER_SERVICE` | `Gmail`, `Outlook`, `Yahoo`, etc. | See Nodemailer's [list of well-known email addresses](https://nodemailer.com/smtp/well-known/) |
+| `SENDER_EMAIL`| Email account you're sending the email from | Must be a valid formatted email address, e.g. rogueartdev@outlook.com |
+| `SENDER_PASS` | Password of the email account you're sending from | Can be account password, but see above on setting app password |
 
-To run it in development mode, use `npm run dev` to live reload the bot as the source code changes.
+**3. (Required) Set required configuration:**
 
-# Contributing
+1. Make a copy of `config.example.js` and rename it to `config.js`
+2. Edit the file and replace the following required values with your own. The rest can be left as-is:
 
-Feel free to fork this repo and change the code however you like! Make a pull request and I'll review it as soon as I can!
+Required Configuration:
+| Variable | Allowed Values
+| - | - |
+| `serverID` | [See how to find Discord IDs](https://www.youtube.com/watch?v=KVLdpboY7bg) |
+| `verifiedRoleID` | [See how to find Discord IDs](https://www.youtube.com/watch?v=KVLdpboY7bg) |
+| `adminID` | [See how to find Discord IDs](https://www.youtube.com/watch?v=KVLdpboY7bg) |
+| `allowedEmailDomains` | Any email domain name, e.g. `gmail.com`, `outlook.com`, `g.ucla.edu` |
+| `from` | Must be in format `"Any Text Here" <your-discord-email-here@mail-domain.com>"` |
+| `subject` | Can be any text, recommended to put your discord name here
+
+# To-Do's / Contributing
+
+**Where can I report an issue?:**
+Feel free to [raise any issues](https://github.com/RogueArt/email-verify-bot) regarding anything or beyond this list:
+- Bugs or program errors
+- Code quality improvements
+- Documentation (translations are welcome!)
+- Missing or improper testing
+- Internationalization (i18n) support for the bot
+- Anything else!
+
+**How can I contribute? (TO-DO items):**
+- Expire emails after a certain period of time for security reasons
+- Add more crypto functions for users to choose from to improve security
+- Add a cooldown to prevent bruteforcing or DoSing the bot
+- Add translations for other languages (e.g. Spanish, Chinese, Arabic)
